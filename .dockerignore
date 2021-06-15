@@ -1,0 +1,8 @@
+# ignore dockerfile
+Dockerfile
+
+#readme
+*.md
+
+# YAML files
+*.yaml
