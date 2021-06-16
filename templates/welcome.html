@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<title>World Bank Data</title>
+<title>Data Analysis</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -8,30 +8,68 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+<style>
+  body,h1 {font-family: "Raleway", Arial, sans-serif}
+  h1 {letter-spacing: 6px}
+  .w3-row-padding img {margin-bottom: 12px}
+  
+  .loader {
+    display: none;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  
+  .loading {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    animation: spin 1s infinite ease-in;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+  
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  </style>
+  
+  <script type="text/javascript">
+    function spinner() {
+        document.getElementsByClassName("loader")[0].style.display = "block";
+    }
+  </script>
+
 <body>
 <!-- !PAGE CONTENT! -->
 <div class="w3-content" style="max-width:1500px">
 
 <!-- Header -->
 <header class="w3-panel w3-center w3-opacity" style="padding:32px 32px">
-  <h1 class="w3-xlarge">World Bank Data Visualization</h1>
+  <h1 class="w3-xlarge">Data Upload</h1>
 </header>
 
-<!-- data columns -->
-<div class="w3-row-padding" style="margin-bottom:64px">
-  <div class="w3-half" style="margin-bottom:32px">
-    <h3>Explore Datasets</h3>
-        <p>Select Option</p>
-      <form action="/getdata"  method="GET" width="25%">
-          <select name="features" width="25%">
-          {% for i in features %}
-            <option value="{{i}}" SELECTED>{{i}}</option>"
-          {% endfor %}
-        </select>
-        <input type="submit">
-      </form><br>
+<!-- upload grid -->
+<div class="w3-row-padding w3-grayscale" style="margin-bottom:256px">
+  <div class="w3-half" style="margin-bottom:128px">
+    <h3>Upload Data</h3>
+        <p>Accepted formats include csv, xlsx, xls</p><br>
 
-  </div>
+        <form style="text-align: center;" action="/uploadfiles/" enctype="multipart/form-data" method="post" >
+            <input name="files" type="file" multiple>
+            <input type="submit" onclick="spinner()">
+        </form>
+        <div class="loader">
+        <div class="loading"></div>
+  </div>     
+</div>
 
   <div class="w3-half" style="margin-bottom:32px">
     <h3>Data Preview</h3>

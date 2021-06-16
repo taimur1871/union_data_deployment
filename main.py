@@ -1,22 +1,28 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+'''
+created on Tue Jun 15
+'''
+
 # Library imports
 from typing import List
 
 from wbgapi.source import features
-from fastapi import FastAPI, Request, Query
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 # import chart and stats
 from utils import api_new
+from utils.save_upload import save_uploaded_file
 import pandas as pd
 
 # Create app and model objects
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/upload", StaticFiles(directory="upload"), name="upload")
 templates = Jinja2Templates(directory="templates/")
 
 # define list of features at application start up
@@ -43,28 +49,7 @@ async def read_root(request:Request):
     # get the properties of the dataset
     prop = api_new.request_data(feat_code)
 
-    return templates.TemplateResponse("welcome.html", 
+    return templates.TemplateResponse("upload.html", 
     {"request": request, "features":features,
     "dataset_name":keyword[0][1],
     "prop":[prop.to_html(classes='data', header='true')]})
-
-''' 
-function originally meant to show results on a separate page,
-not being used here for now
-
-# get the data and process it to a pandas dataframe 
-# can be changed to dask or other formats
-@app.post("/load_data")
-async def create_upload_files(request:Request, keyword):
-    
-    # send api call to get the required data
-    data_obj = api_new.laod_data(keyword)
-    
-    # create initial dataframe
-    df_ini = pd.DataFrame(data_obj)
-
-    return templates.TemplateResponse("report.html", {"request":request, "message":message,
-                                    "inner":inner, "outer":outer, "main":main, "second":second,
-                                    "loc":loc, "top_name": top_name_disp, "blade_pic":blade_1,
-                                    "SN":temp_folder[0]})
-'''
