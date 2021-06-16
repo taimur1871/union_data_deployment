@@ -16,7 +16,6 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 # import chart and stats
-from utils import api_new
 from utils.save_upload import save_uploaded_file
 from utils.read_excel import parse_contents
 
@@ -33,10 +32,6 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/upload", StaticFiles(directory="upload"), name="upload")
 templates = Jinja2Templates(directory="templates/")
-
-# define list of features at application start up
-# setting this globally for testing only
-features, feat_codes = api_new.options()
 
 # Welcome page
 @app.get("/", response_class=HTMLResponse)
