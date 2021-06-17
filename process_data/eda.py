@@ -8,90 +8,8 @@ import pandas as pd
 import numpy as np
 
 # import plotting modules
-import plotly.express as px
 import seaborn as sns
 import matplotlib.pyplot as plt
-
-from sklearn.model_selection import train_test_split
-
-"""### EDA Categories"""
-
-# read data
-df_cat = pd.read_csv('df_complete.csv')
-#df_cat.fillna(-99.25, inplace=True) # kept here for initial analysis
-
-# determine the shape and size of the dataset
-df_cat.shape
-
-# determine data types and column names
-df_cat.dtypes
-
-# determine total number of sub-categories
-for i in df_cat.columns:
-  print(i, len(df_cat[i].unique()))
-
-# create pair plots
-pair_plot = sns.pairplot(df_cat, hue='Deduction Code', height=2.5)
-
-# determine number of samples in each deduction group
-df_cat['Deduction Code'].value_counts()
-
-# create a copy of the df
-df_combined = df_cat.copy(deep=True)
-
-# combine code 1 and 2 into one category
-df_combined['category'] = np.where(df_combined['Deduction Code'] == 0, 0,1)
-
-# create pair plots
-pair_plot = sns.pairplot(df_combined, height=2.5)
-
-# check different categories
-df_cat['Building Description'].unique()
-
-# check different categories
-df_cat['Employee Type Description'].unique()
-
-# crossplot categories vs pay rate
-fig = px.scatter(df_cat, x='Job Pay Rate', y='Yrs Svc', 
-                 color='Building Description')
-fig.show()
-
-# crossplot employee type with pay rate
-fig = px.scatter(df_cat, x='Job Pay Rate', y='Yrs Svc',
-                 color='Employee Type Description')
-
-fig.show()
-
-"""### Convert to Dummeis for ML"""
-
-# get columns and dtypes
-df_combined.drop('Deduction Code',axis=1, inplace=True)
-df_combined.dtypes
-
-# get column names
-df_combined.columns
-
-# create features and labels
-X = df_combined[['Building Description', 'Employee Type Description', 'Zip',
-       'Job Start Date', 'Job Pay Rate', 'Yrs Svc']]
-y = df_combined['category']
-
-X
-
-# get dummy variables for object type datasets
-# determine which columns have object type dataset
-df_cat_dummies = pd.get_dummies(df_combined[['Building Description',
-                                        'Employee Type Description',
-                                  ]])
-
-# get dummies for X
-X_d = pd.get_dummies(X[['Building Description',
-                        'Employee Type Description',
-                        ]])
-
-X_d.shape
-
-"""### Trying Categorical Predictions"""
 
 # import logistic regression, SVC, random forests, isolation forests?
 # we have target labels so why not see if a model fits on those?
@@ -101,13 +19,61 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier as mlp
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score
 from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
 
-# get train and test data
-X_train, X_test, y_train, y_test = train_test_split(X_d, y, test_size=0.2, 
-                                                    random_state=7)
+"""### EDA Categories"""
+def eda(df):
+
+    '''
+    function to take a dataframe and perform basic analysis
+    '''
+    # determine data types and column names
+    categories = df.dtypes.to_dict()
+    # determine number of samples in each deduction group
+    num_values = df['Deduction Code'].value_counts()
+
+    return categories, num_values
+
+def pair_plot(df):
+    # create pair plots
+    pair_plot = sns.pairplot(df, hue='Deduction Code', height=2.5)
+
+    return pair_plot
+
+def pre_process(df):
+    
+    # combine code 1 and 2 into one category
+    df['category'] = np.where(df['Deduction Code'] == 0, 0,1)
+
+    """### Convert to Dummeis for ML"""
+
+    # get columns and dtypes
+    df.drop('Deduction Code',axis=1, inplace=True)
+
+    # create features and labels
+    X = df[['Building Description', 'Employee Type Description', 'Zip',
+        'Job Start Date', 'Job Pay Rate', 'Yrs Svc']]
+    y = df['category']
+
+    # get dummies for X
+    X_d = pd.get_dummies(X[['Building Description',
+                            'Employee Type Description',
+                            ]])
+
+    # get train and test data
+    X_train, X_test, y_train, y_test = train_test_split(X_d, y, test_size=0.2, 
+                                                        random_state=7)
+
+    return X_train, X_test, y_train, y_test
 
 """### Test MLP"""
+# only setting up MLP for now
+def mlp_test(df):
+    # get train and test data
+    X_train, X_test, y_train, y_test = pre_process(df)
 
+    
 # MLP classifier
 mlp_model = mlp(max_iter=1000)
 
@@ -120,8 +86,6 @@ mlp_preds = mlp_model.predict(X_test)
 # get model performance data
 confusion_matrix(y_test, mlp_preds)
 
-# MLP hyper-parameter optimization
-from sklearn.model_selection import GridSearchCV
 
 param_grid = [{
     'activation' : ['relu', 'tanh'],

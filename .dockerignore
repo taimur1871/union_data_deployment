@@ -6,3 +6,8 @@ Dockerfile
 
 # YAML files
 *.yaml
+
+# csv or excel files
+.xls
+.xlsx
+.csv

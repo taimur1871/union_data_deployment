@@ -6,6 +6,8 @@ created on Tue Jun 15
 '''
 
 # Library imports
+from pandas.core.frame import DataFrame
+from process_data.eda import pre_process
 from typing import List
 from fastapi.datastructures import UploadFile
 
@@ -18,6 +20,7 @@ from fastapi.templating import Jinja2Templates
 # import chart and stats
 from utils.save_upload import save_uploaded_file
 from utils.read_excel import parse_contents
+from process_data.eda import mlp_test
 
 # python modules
 import time
@@ -65,6 +68,16 @@ async def read_root(request:Request, files: List[UploadFile] = File(...)):
     # open file and get dataframe
     df, df_head = parse_contents(p, fn)
 
+    # create a dataframe for displaying data types
+    df_dtypes = pd.DataFrame(df.dtypes)
+    df_dtypes.rename({0:'Data Type'}, axis=1, inplace=True)
+
     return templates.TemplateResponse("upload.html", 
-    {"request": request, "dataset_name":p,
+    {"request": request, "dataset_name":p, 
+    "data_summary": [df_dtypes.to_html(classes='data', header='true')],
     "df_head":[df_head.to_html(classes='data', header='true')]})
+
+# process the dataframe
+@app.post("/processdata")
+async def read_root(request:Request, df: DataFrame):
+    mlp_test(df)

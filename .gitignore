@@ -1,3 +1,10 @@
 # cython files
 __pycache__
 *.pyc
+
+# csv or excel files
+.xls
+.xlsx
+.csv
+
+# 
