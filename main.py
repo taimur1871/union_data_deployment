@@ -6,19 +6,18 @@ created on Tue Jun 15
 '''
 
 # Library imports
-from pandas.core.frame import DataFrame
-from process_data.eda import pre_process
 from typing import List
 from fastapi.datastructures import UploadFile
 
 from wbgapi.source import features
-from fastapi import FastAPI, Request, File, UploadFile
+from fastapi import FastAPI, Request, File, UploadFile, BackgroundTasks
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 # import chart and stats
 from utils.save_upload import save_uploaded_file
+from process_data.eda import pre_process
 from utils.read_excel import parse_contents
 from process_data.eda import mlp_test
 
@@ -44,7 +43,8 @@ async def read_root(request:Request):
 
 # data properties page
 @app.post("/uploadfile")
-async def read_root(request:Request, files: List[UploadFile] = File(...)):
+async def read_root(request:Request, background_tasks:BackgroundTasks,
+                    files: List[UploadFile] = File(...)):
     
     # create an upload folder directory using timestamp
     upload_folder = os.path.join('./upload', time.ctime(time.time()))
@@ -68,6 +68,8 @@ async def read_root(request:Request, files: List[UploadFile] = File(...)):
     # open file and get dataframe
     df, df_head = parse_contents(p, fn)
 
+    #background_tasks.add_task(mlp_test(df))
+
     # create a dataframe for displaying data types
     df_dtypes = pd.DataFrame(df.dtypes)
     df_dtypes.rename({0:'Data Type'}, axis=1, inplace=True)
@@ -78,6 +80,8 @@ async def read_root(request:Request, files: List[UploadFile] = File(...)):
     "df_head":[df_head.to_html(classes='data', header='true')]})
 
 # process the dataframe
-@app.post("/processdata")
-async def read_root(request:Request, df: DataFrame):
-    mlp_test(df)
+@app.get("/predictions")
+async def read_root(request:Request):
+    return templates.TemplateResponse("predictions.html", 
+    {"request":request}
+    )
