@@ -59,13 +59,20 @@
 <!-- upload grid -->
 <div class="w3-row-padding w3-grayscale" style="margin-bottom:256px">
   <div class="w3-half" style="margin-bottom:128px">
-    <h3>Upload Data</h3>
+    <h3>Upload Training & Prediction Data</h3>
         <p>Accepted formats include csv, xlsx, xls</p><br>
 
         <form style="text-align: center;" action="/uploadfile" enctype="multipart/form-data" method="post" >
-            <input name="files" type="file" multiple>
-            <input type="submit" onclick="spinner()">
-        </form>
+          <p>Training Data</p>
+          <input name="files" type="file" multiple><br><br>
+
+          <p>Prediction Data</p>
+          <input name="files" type="file" multiple><br><br>
+
+          <input type="submit" onclick="spinner()">
+        </form><br>
+
+        <!-- rotating loader -->
         <div class="loader">
         <div class="loading"></div>
   </div>     

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<title>Data Analysis Dull Grading</title>
+<title>Data Analysis</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -58,7 +58,7 @@ h1 {letter-spacing: 6px}
 
 <!-- Header -->
 <header class="w3-panel w3-center w3-opacity" style="padding:32px 32px">
-  <h1 class="w3-xlarge">Uploaded Data</h1>
+  <h1 class="w3-xlarge">Predictions</h1>
 
   <div class="w3-padding-16">
     <div class="w3-bar w3-border">
@@ -69,40 +69,11 @@ h1 {letter-spacing: 6px}
 
 <!-- upload grid -->
 <div class="w3-row-padding w3-grayscale" style="margin-bottom:64px">
-  <div class="w3-half" style="margin-bottom:64px">
-    <h3>Upload Data</h3>
-      <p>Accepted formats include csv, xlsx, xls</p><br>
-
-      <form style="text-align: center;" action="/uploadfile" enctype="multipart/form-data" method="post" >
-        <input name="files" type="file" multiple>
-        <input type="submit" onclick="spinner()">
-      </form><br><br>
-    
+  <h3 class="w3-center">Data Preview</h3>
     <div class="w3-center">
-      <h3>Data Types</h3>
-        {% for j in data_summary %}
-          {{j|safe}}
-        {% endfor %}
-    </div><br><br>
-    
-      <div class="w3-center">
-        <button type="button">Process Data</button>
-      </div>
-      
-
-      <div class="loader">
-      <div class="loading"></div>
-
-  </div>
-</div>
-
-  <div class="w3-half" style="margin-bottom:64px">
-    <div class="w3-half" style="margin-bottom:64px">
-      <h3>Data Preview</h3>
-        {% for i in df_head %}
-          {{i|safe}}
-        {% endfor %}    
-    </div>
+      {% for i in data_summary %}
+        {{i|safe}}
+      {% endfor %}
   </div>
 </div>
   
