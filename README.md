@@ -6,7 +6,9 @@ This repo is to build a basic deployment app for Machine Learning process develo
 * fastapi 0.63.0
 * gunicorn 20.0.4
 * Jinja2 2.11.2
-* pandas 1.1.4
+* pandas 1.2.4
+* seaborn 0.11.0
+* sklearn 0.23.2
 * requests 2.22.0
 * uvicorn 0.13.3
 * wbgapi 1.0.5

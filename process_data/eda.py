@@ -62,7 +62,7 @@ def pre_process(df):
 
     # get train and test data
     X_train, X_test, y_train, y_test = train_test_split(X_d, y, test_size=0.2, 
-                                                        random_state=7)
+                                                        random_state=42)
 
     return X_train, X_test, y_train, y_test
 
@@ -83,11 +83,11 @@ def pred_process(df):
     y = df['category']
 
     # get dummies for X
-    X_train = pd.get_dummies(X[['Building Description',
+    X_pred = pd.get_dummies(X[['Building Description',
                             'Employee Type Description',
                             ]])
 
-    return X_train
+    return X_pred
 
 """### Test MLP"""
 # only setting up MLP for now
@@ -111,40 +111,44 @@ def mlp_test(df_train, df_pred, model_save_path):
     }]
 
     # instantiate GridSearchCV object
-    #mlp_clf = GridSearchCV(mlp_model, param_grid, n_jobs=1, cv=5)
+    mlp_clf = GridSearchCV(mlp_model, param_grid, n_jobs=1, cv=5)
     # fit the classifier
-    #mlp_clf.fit(X_train, y_train)
-    mlp_model.fit(X_train, y_train)
+    mlp_clf.fit(X_train, y_train)
 
     # make predictions
-    results = mlp_model.predict(X_pred)
+    results = mlp_clf.predict(X_pred)
 
     # combine with df_pred
     df_pred['results'] = results
 
     # view the best hyper-parameters
-    #optimal_hparams = mlp_clf.best_params_
+    optimal_hparams = mlp_clf.best_params_
 
     # test model performance using optimized hyper-parameters
-    #y_true, y_pred = y_test, mlp_clf.predict(X_test)
+    y_true, y_pred = y_test, mlp_clf.predict(X_test)
 
     # get classification report
-    #results = classification_report(y_true, y_pred)
+    results = classification_report(y_true, y_pred)
 
     # save the model
     filename = os.path.join(model_save_path, 'saved_model')
-    #pickle.dump(mlp_clf, open(filename, 'wb'))
     pickle.dump(mlp_model, open(filename, 'wb'))
 
     return df_pred
 
 # function to get predictions
 def get_preds(df_test, saved_model):
+    # get prediction data
+    X_pred = pred_process(df_test)
+    
     # open model
     loaded_model = pickle.load(open(saved_model, 'rb'))
     
     # get results
-    result = loaded_model.predict(df_test)
+    results = loaded_model.predict(X_pred)
 
-    return result
+    # combine with df_pred
+    df_test['results'] = results
+
+    return df_test
     

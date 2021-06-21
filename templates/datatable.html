@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<title>Data Analysis</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">  
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+  
+<!-- styling to scroll -->
+<style>
+body {
+  overflow: scroll;
+}
+</style>
+
+<body>
+<!-- !PAGE CONTENT! -->
+<div class="w3-content" style="max-width:1500px">
+
+<!-- Header -->
+<header class="w3-panel w3-center w3-opacity" style="padding:32px 32px">
+  <h1 class="w3-xlarge">Training Data</h1>
+
+    <div class="w3-bar w3-border">
+      <a href="/" class="w3-bar-item w3-button w3-hide-small">Home</a>
+    </div>
+</header>
+
+<!-- data grid -->
+<div class="w3-row-padding w3-grayscale" style="margin-bottom:64px">
+
+      <h3 style="text-align: center;">Data Preview</h3>
+      
+      {% for i in data_summary %}
+        {{i|safe}}
+      {% endfor %}
+            
+</div>
+
+</div>
+
+</body>
+
+<!-- datatable jquery script -->
+<script type="text/javascript">
+  $(document).ready( function () {
+      $('table_id').DataTable();
+  }  );
+</script>
+
+</html>
