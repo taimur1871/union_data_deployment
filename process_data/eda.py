@@ -22,9 +22,8 @@ from sklearn.model_selection import GridSearchCV
 
 """### EDA Categories"""
 def eda(df):
-
     '''
-    function to take a dataframe and perform basic analysis
+    function to take a dataframe and get basic stats
     '''
     # determine data types and column names
     categories = df.dtypes.to_dict()
@@ -34,14 +33,16 @@ def eda(df):
     return categories, num_values
 
 def pair_plot(df):
-    # create pair plots
+    # optional function to create pair plots
     pair_plot = sns.pairplot(df, hue='Deduction Code', height=2.5)
 
     return pair_plot
 
 # function to process training data
 def pre_process(df):
-    
+    '''
+    function to process training dataset
+    '''
     # combine code 1 and 2 into one category
     df['category'] = np.where(df['Deduction Code'] == 0, 0,1)
 
@@ -67,13 +68,14 @@ def pre_process(df):
     return X_train, X_test, y_train, y_test
 
 # function to process prediction data
-def pred_process(df):
-    
+def process_prediction_df(df):
+    '''
+    function to process prediction dataset
+    '''
     # combine code 1 and 2 into one category
     df['category'] = np.where(df['Deduction Code'] == 0, 0,1)
 
-    """### Convert to Dummeis for ML"""
-
+    '''### Convert to Dummeis for ML'''
     # get columns and dtypes
     df.drop('Deduction Code',axis=1, inplace=True)
 
@@ -91,12 +93,12 @@ def pred_process(df):
 
 """### Test MLP"""
 # only setting up MLP for now
-def mlp_test(df_train, df_pred, model_save_path):
+def mlp_train(df_train, df_pred, model_save_path):
     # get train and test data
     X_train, X_test, y_train, y_test = pre_process(df_train)
 
     # get prediction data
-    X_pred = pred_process(df_pred)
+    X_pred = process_prediction_df(df_pred)
 
     # MLP classifier
     mlp_model = mlp(max_iter=1000)
@@ -139,16 +141,18 @@ def mlp_test(df_train, df_pred, model_save_path):
 # function to get predictions
 def get_preds(df_test, saved_model):
     # get prediction data
-    X_pred = pred_process(df_test)
+    X_pred = process_prediction_df(df_test)
     
     # open model
     loaded_model = pickle.load(open(saved_model, 'rb'))
     
     # get results
-    results = loaded_model.predict(X_pred)
+    results = loaded_model.predict_proba(X_pred)
 
     # combine with df_pred
-    df_test['results'] = results
+    #df_test[['result 0, result 1']] = results[:,0], results[:,1]
+    df_test['result 0'] = results[:,0]
+    df_test['result 1'] = results[:,1]
 
     return df_test
     
